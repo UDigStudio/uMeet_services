@@ -1,0 +1,556 @@
+swagger: "2.0"
+info:
+  description: "This is the uMeet server definition. You can find out more about uMeet at [https://github.com/UDigStudio/uMeet](https://github.com/UDigStudio/uMeet)."
+  version: "1.0.0"
+  title: "uMeet"
+  license:
+    name: "MIT License"
+    url: "https://github.com/UDigStudio/uMeet/blob/master/LICENSE"
+host: "uMeet.udigstudio.com"
+basePath: "/v1"
+tags:
+- name: "player"
+  description: "All about your players"
+- name: "admin"
+  description: "Operations about administration"
+- name: "game"
+  description: "Routes for your game"
+- name : "question"
+  description: "Routes for manipulating questions"
+schemes:
+- "https"
+- "http"
+paths:
+  /question:
+    post:
+      tags:
+      - "question"
+      summary : "Create question"
+      operationId : "createQuestion"
+      produces:
+      - "application/json"
+      parameters:
+      - in : "body"
+        name : "body"
+        description: "Create Question"
+        required : true
+        schema:
+          $ref : "#/definitions/Question"
+      responses:
+        default:
+          description: "Success"
+  /question/{questionId}:
+    put:
+      tags:
+      - "question"
+      summary : "Update question"
+      operationId : "updateQuestion"
+      produces:
+      - "application/json"
+      parameters:
+      - in : "body"
+        name : "body"
+        description: "Update Question"
+        required : true
+        schema:
+          $ref : "#/definitions/Question"
+      - name: "questionId"
+        in: "path"
+        description: "Question to update"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        default:
+          description: "Success"
+    delete:
+      tags:
+      - "question"
+      summary : "Remove question"
+      operationId : "removeQuestion"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "questionId"
+        in: "path"
+        description: "Question id to remove from admin"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        default:
+          description: "Success"
+  /question/{questionId}/on/{gameId}:
+    put:
+      tags:
+      - "question"
+      summary: "Assign question to game"
+      operationId : "addQuestionToGame"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "questionId"
+        in: "path"
+        description: "Question id to add to game"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "gameId"
+        in: "path"
+        description: "Game id"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Added question to game"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Game or Question not found"
+    delete:
+      tags:
+      - "question"
+      summary: "Remove question from game"
+      operationId : "removeQuestionFromGame"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "questionId"
+        in: "path"
+        description: "Question id to remove from game"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "gameId"
+        in: "path"
+        description: "Game id"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Removed question from game"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Game or Question not found"
+
+
+
+
+
+  /login:
+    post:
+      tags:
+      - "admin"
+      summary : "Authenticate Admin"
+      operationId : "loginAdmin"
+      produces:
+      - "application/json"
+      parameters:
+      - in : "body"
+        name : "body"
+        description: "Logged In Admin Object"
+        required : true
+        schema:
+          $ref : "#/definitions/Admin"
+      responses:
+        default:
+          description: "Success"
+  /logout:
+    post:
+      tags:
+      - "admin"
+      summary : "Logout administrator"
+      operationId : "logoutAdmin"
+      produces:
+      - "application/json"
+      responses:
+        default:
+          description: "Success"
+  /admin:
+    post:
+      tags:
+      - "admin"
+      summary : "Create new admin"
+      operationId : "createAdmin"
+      produces:
+      - "application/json"
+      parameters:
+      - in : "body"
+        name : "body"
+        description: "Created Admin Object"
+        required : true
+        schema:
+          $ref : "#/definitions/Admin"
+      responses:
+        default:
+          description: "Success"
+    
+
+  /game:
+    post:
+      tags:
+      - "game"
+      summary : "Create new game"
+      operationId : "createGame"
+      produces:
+      - "application/json"
+      parameters:
+      - in : "body"
+        name : "body"
+        description: "Created Game Object"
+        required : true
+        schema:
+          $ref : "#/definitions/Game"
+      responses:
+        default:
+          description: "Success"
+  /game/{gameId}:
+    put:
+      tags:
+      - "game"
+      summary : "Update game"
+      operationId : "updateGame"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "gameId"
+        in: "path"
+        description: "Game to update"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in : "body"
+        name : "body"
+        description: "Updated Game Object"
+        required : true
+        schema:
+          $ref : "#/definitions/Game"
+      responses:
+        200:
+          description: "Success"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Game not found"
+  /game/{gameId}/questions:
+    get:
+      tags:
+      - "game"
+      summary : "Get questions for game"
+      operationId : "gameQuestions"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "gameId"
+        in: "path"
+        description: "Game to update"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Questions in game"
+          schema:
+            $ref : "#/definitions/ArrayOfQuestions"
+        204:
+          description: "No questions in game"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Game not found"
+  /game/{gameId}/start:
+    put:
+      tags:
+      - "game"
+      summary : "Start game"
+      operationId : "startGame"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "gameId"
+        in: "path"
+        description: "Game to start"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Success"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Game not found"
+  /game/{gameId}/end:
+    put:
+      tags:
+      - "game"
+      summary : "End game"
+      operationId : "endGame"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "gameId"
+        in: "path"
+        description: "Game to end"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Success"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Game not found"
+
+
+  /player:
+    post:
+      tags:
+      - "player"
+      summary : "Create new player"
+      operationId : "createPlayer"
+      produces:
+      - "application/json"
+      parameters:
+      - in : "body"
+        name : "body"
+        description: "Created Player Object"
+        required : true
+        schema:
+          $ref : "#/definitions/Player"
+      responses:
+        default:
+          description: "Success"
+  /player/{playerId}:
+    get:
+      tags:
+      - "player"
+      summary : "Fetch specific player"
+      operationId : "getPlayer"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "playerId"
+        in: "path"
+        description: "Player to fetch"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Player"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Player not found"
+    delete:
+      tags:
+      - "player"
+      summary : "Delete specific player"
+      operationId : "deletePlayer"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "playerId"
+        in: "path"
+        description: "Player to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Success"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Player not found"
+    put:
+      tags:
+      - "player"
+      summary : "Update player object"
+      operationId : "updatePlayer"
+      produces:
+      - "application/json"
+      parameters:
+      - in : "body"
+        name : "body"
+        description : "Updated Player Object"
+        required: true
+        schema:
+          $ref : "#/definitions/Player"
+      - name: "playerId"
+        in: "path"
+        description: "Player id to update"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        default:
+          description: "Success"
+  /player/{playerId}/match:
+    get:
+      tags:
+      - "player"
+      summary : "Find a matching player"
+      operationId : "getMatch"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "playerId"
+        in: "path"
+        description: "Player to find a match for"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Match Found"
+          schema:
+            $ref: "#/definitions/Match"
+        204:
+          description : "No Match Available"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Player not found"
+        418:
+          description: "Player can't match due to being a teapot."
+    post:
+      tags:
+      - "player"
+      summary : "Report match success"
+      operationId : "matchSuccess"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "playerId"
+        in: "path"
+        description: "Player that found their match"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Match Found"
+          schema:
+            $ref: "#/definitions/Player"
+        204:
+          description : "No Match Available"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Player not found"
+        418:
+          description: "Player can't match due to being a teapot."
+
+definitions:
+  Game:
+    type: "object"
+    required:
+    - adminId
+    - roomCode
+    - delayBeforeStart
+    - delayBetweenPairing
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      adminId:
+        type: "integer"
+        format: "int64"
+        description : "Administrator reference"
+      roomCode:
+        type: "string"
+        description : "Room code provides a reference to find the game without needing to find the id itself. Should be unique."
+      delayBeforeStart:
+        type: "integer"
+        description : "Delay before beginning a game"
+        format: "int64"
+      delayBetweenPairing:
+        type: "integer"
+        description: "Delay before pairing to another player"
+        format: "int64"
+    xml:
+      name: "Game"
+  Question:
+    type: "object"
+    required:
+    - question
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      question:
+        type: "string"
+        description : "The question to be asked"
+    xml:
+      name: "Question"
+  ArrayOfQuestions:
+    type : "array"
+    items:
+      $ref : "#/definitions/Question"
+  Admin:
+    type: "object"
+    required:
+    - username
+    - password
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      username:
+        type: "string"
+        description : "Username / Email for the administrator"
+      password:
+        type: "string"
+        description : "Password to authenticate administrator"
+    xml:
+      name: "Admin"
+  Match:
+    type : "object"
+    properties:
+      player:
+        $ref: "#/definitions/Player"
+      question:
+        $ref: "#/definitions/Question"
+  Player:
+    type : "object"
+    required:
+    - name
+    - description
+    - codename
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type : "string"
+        description: "Players actual name"
+      description:
+        type : "string"
+        description : "Description about the player to help in identifying"
+      codename:
+        type : "string"
+        description: "A randomly assigned codename the player can be called by."
+      points:
+        type : "integer"
+        format : "int64"
+        description : "Total points awarded, calculated on the server"
+      gameId:
+        type : "integer"
+        format : "int64"
+      status:
+        enum:
+        - "PAIRED"
+        - "WAITING"
+        - "KICKED"
+        - "QUIT"
+      lastStatusChange:
+        type : "string"
+        format : "date"
